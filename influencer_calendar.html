@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Influencer Calendar 2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css"/>
+<style>
+:root {
+  --bg: #0d0d0d;
+  --surface: #161616;
+  --surface2: #1e1e1e;
+  --surface3: #2a2a2a;
+  --border: #333333;
+  --ink: #f5f5f5;
+  --ink2: #a0a0a0;
+  --ink3: #666666;
+  --accent: #E1306C;
+  --accent2: #F77737;
+  --accent-glow: rgba(225,48,108,0.3);
+  --gradient-ig: linear-gradient(135deg, #F77737, #E1306C, #C13584, #833AB4);
+  --green: #22d3a0;
+  --green-bg: rgba(34,211,160,0.12);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245,158,11,0.12);
+  --red: #f43f5e;
+  --red-bg: rgba(244,63,94,0.12);
+  --blue: #38bdf8;
+  --blue-bg: rgba(56,189,248,0.12);
+  --sidebar-w: 240px;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ══════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.sidebar-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .logo-mark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar-logo .logo-mark .logo-icon {
+  width: 32px; height: 32px;
+  background: var(--gradient-ig);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+.sidebar-logo .logo-sub {
+  font-size: 11px;
+  color: var(--ink3);
+  margin-top: 3px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.nav {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-btn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink2);
+  transition: all 0.18s ease;
+  position: relative;
+}
+.nav-btn .nav-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 13px;
+  transition: color 0.18s;
+}
+.nav-btn:hover {
+  background: var(--surface2);
+  color: var(--ink);
+}
+.nav-btn.active {
+  background: rgba(225,48,108,0.15);
+  color: var(--accent2);
+  font-weight: 600;
+}
+.nav-btn.active .nav-icon { color: var(--accent); }
+.nav-btn.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 60%;
+  background: var(--gradient-ig);
+  border-radius: 0 3px 3px 0;
+}
+
+.nav-notif-badge {
+  margin-left: auto;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 99px;
+  display: none;
+}
+.nav-notif-badge.show { display: block; }
+
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--ink3);
+}
+
+/* ══════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════ */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg);
+  position: relative;
+}
+
+.view { display: none; padding: 28px 32px; min-height: 100%; }
+.view.active { display: block; }
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+.page-subtitle {
+  font-size: 13px;
+  color: var(--ink3);
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+/* ══════════════════════════════════════
+   FORM COMPONENTS
+══════════════════════════════════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.form-section-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 14px;
+  margin-top: 4px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.form-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.form-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+.field label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink3);
+  margin-bottom: 7px;
+  letter-spacing: 0.3px;
+}
+.field input,
+.field select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  appearance: none;
+}
+.field input::placeholder { color: var(--ink3); }
+.field input:focus,
+.field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a5a80' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btn-primary {
+  background: var(--gradient-ig);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+.btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+.btn-ghost {
+  background: var(--surface2);
+  color: var(--ink2);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: var(--surface3); color: var(--ink); }
+.btn-danger {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid rgba(244,63,94,0.2);
+}
+.btn-danger:hover { background: rgba(244,63,94,0.2); }
+.btn-green {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid rgba(34,211,160,0.2);
+}
+.btn-green:hover { background: rgba(34,211,160,0.2); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-icon { padding: 8px 10px; }
+
+/* ══════════════════════════════════════
+   ALERT / BANNER
+══════════════════════════════════════ */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.alert-ok { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,211,160,0.25); }
+.alert-warn { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+.alert-bad { background: var(--red-bg); color: var(--red); border: 1px solid rgba(244,63,94,0.25); }
+.alert-info { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(56,189,248,0.25); }
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+#toast-box {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  min-width: 300px;
+  max-width: 400px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.25s ease;
+}
+.toast-warn { border-left: 3px solid var(--amber); color: var(--amber); }
+.toast-ok   { border-left: 3px solid var(--green); color: var(--green); }
+.toast-bad  { border-left: 3px solid var(--red);   color: var(--red); }
+@keyframes toastIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: none; } }
+
+/* ══════════════════════════════════════
+   CREATE VIEW
+══════════════════════════════════════ */
+#view-create .card { max-width: 900px; }
+#create-alert { min-height: 0; }
+
+/* ══════════════════════════════════════
+   CALENDAR VIEW
+══════════════════════════════════════ */
+.cal-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+}
+.cal-nav .cal-label {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  min-width: 160px;
+  text-align: center;
+}
+.cal-nav button {
+  all: unset;
+  cursor: pointer;
+  color: var(--ink2);
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+  font-size: 13px;
+}
+.cal-nav button:hover { background: var(--surface2); color: var(--ink); }
+
+.cal-grid-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-top: 16px;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.cal-weekday {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  padding: 8px 4px;
+  text-align: center;
+}
+.cal-cell {
+  min-height: 110px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+.cal-cell:hover { border-color: rgba(225,48,108,0.4); }
+.cal-cell.today { border-color: var(--accent); background: rgba(225,48,108,0.04); }
+.cal-cell.all-posted { border-color: var(--green); background: rgba(34,211,160,0.04); }
+.cal-cell.empty { background: transparent; border-color: transparent; }
+.cal-day-num {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink3);
+  text-align: right;
+  margin-bottom: 4px;
+}
+.cal-cell.today .cal-day-num {
+  color: var(--accent);
+}
+
+/* ── Calendar Entry Card ── */
+.cal-entry {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-top: 5px;
+  font-size: 11.5px;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+.cal-entry:hover {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.cal-entry .entry-name {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.cal-entry .entry-meta {
+  color: var(--ink3);
+  font-size: 10px;
+  line-height: 1.5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Custom Toggle Switches ── */
+.cal-entry .entry-checks {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  align-items: center;
+}
+.cal-entry .entry-checks label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ink3);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+.cal-entry .entry-checks label:hover { color: var(--ink2); }
+.cal-entry .entry-checks input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 14px;
+  background: var(--surface3);
+  border: none;
+  border-radius: 99px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  margin: 0;
+}
+.cal-entry .entry-checks input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  background: var(--ink3);
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+.cal-entry .entry-checks input[type="checkbox"]:checked {
+  background: var(--green);
+}
+.cal-entry .entry-checks input[type="checkbox"]:checked::after {
+  transform: translateX(14px);
+  background: #fff;
+}
+
+/* ── Action Buttons (show on hover) ── */
+.cal-entry .entry-actions {
+  display: flex;
+  gap: 3px;
+  margin-top: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 0.2s, max-height 0.2s, margin-top 0.2s;
+}
+.cal-entry:hover .entry-actions {
+  opacity: 1;
+  max-height: 40px;
+  margin-top: 6px;
+}
+.cal-entry .entry-actions button {
+  all: unset;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--ink3);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.cal-entry .entry-actions button:hover { color: var(--ink); background: var(--surface3); }
+.cal-entry .entry-actions .del-btn:hover { color: var(--red); background: var(--red-bg); }
+
+/* ── Edit Mode Inputs ── */
+.cal-entry .mini-input,
+.cal-entry .mini-select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 8px;
+  color: var(--ink);
+  font-size: 11px;
+  font-family: var(--font-body);
+  outline: none;
+  width: 100%;
+  margin-top: 3px;
+  transition: border-color 0.15s;
+}
+.cal-entry .mini-input:focus,
+.cal-entry .mini-select:focus { border-color: var(--accent); }
+
+/* platform badges */
+.badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.badge-ig { background: rgba(225,48,108,0.15); color: #e1306c; }
+.badge-yt { background: rgba(255,0,0,0.12); color: #ff4444; }
+.badge-fb { background: rgba(24,119,242,0.15); color: #1877f2; }
+
+/* ══════════════════════════════════════
+   LIST VIEW
+══════════════════════════════════════ */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.stat-card .stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 8px;
+}
+.stat-card .stat-value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -1px;
+}
+.stat-card .stat-sub {
+  font-size: 12px;
+  color: var(--ink3);
+  margin-top: 3px;
+}
+.stat-card.accent-card { border-color: rgba(225,48,108,0.3); background: rgba(225,48,108,0.06); }
+.stat-card.accent-card .stat-value { color: var(--accent2); }
+.stat-card.green-card { border-color: rgba(34,211,160,0.25); background: rgba(34,211,160,0.05); }
+.stat-card.green-card .stat-value { color: var(--green); }
+
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+.search-input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px 9px 36px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  width: 240px;
+  transition: border-color 0.18s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a5a80' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+}
+.search-input:focus { border-color: var(--accent); }
+
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+table { width: 100%; border-collapse: collapse; }
+thead tr { border-bottom: 1px solid var(--border); }
+th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  background: var(--surface2);
+  white-space: nowrap;
+}
+td {
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--ink2);
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--surface2); color: var(--ink); }
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.pill-yes { background: var(--green-bg); color: var(--green); }
+.pill-no  { background: var(--surface3); color: var(--ink3); }
+.pill-before { background: var(--blue-bg); color: var(--blue); }
+.pill-after  { background: var(--amber-bg); color: var(--amber); }
+
+/* ══════════════════════════════════════
+   SETTINGS VIEW
+══════════════════════════════════════ */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 800px;
+}
+.settings-section-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.settings-section-title i { color: var(--accent); font-size: 13px; }
+.file-drop {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 24px 20px;
+  text-align: center;
+  color: var(--ink3);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+}
+.file-drop:hover, .file-drop.drag { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+.file-drop input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.file-drop .drop-icon { font-size: 24px; margin-bottom: 8px; }
+.file-drop .drop-text { font-weight: 500; }
+.file-drop .drop-hint { font-size: 11px; margin-top: 4px; }
+.csv-hint {
+  font-size: 11px;
+  color: var(--ink3);
+  font-family: monospace;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 12px;
+  word-break: break-all;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════
+   NOTIFICATION VIEW
+══════════════════════════════════════ */
+.notif-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.notif-panel { }
+.notif-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.notif-panel-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.notif-count {
+  background: var(--surface3);
+  color: var(--ink2);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.notif-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+}
+.notif-item .notif-ico { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.notif-item .notif-text { color: var(--ink2); line-height: 1.4; }
+.notif-item.warn { border-color: rgba(245,158,11,0.25); background: var(--amber-bg); }
+.notif-item.warn .notif-text { color: var(--amber); }
+.notif-item.ok   { border-color: rgba(34,211,160,0.2); background: var(--green-bg); }
+.notif-item.ok .notif-text { color: var(--green); }
+.notif-item.bad  { border-color: rgba(244,63,94,0.2); background: var(--red-bg); }
+.notif-item.bad .notif-text { color: var(--red); }
+.notif-empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--ink3);
+  font-size: 13px;
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .notif-grid { grid-template-columns: 1fr; }
+  .settings-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  :root { --sidebar-w: 64px; }
+  .sidebar-logo .logo-mark span, .sidebar-logo .logo-sub,
+  .nav-btn .nav-label, .sidebar-footer { display: none; }
+  .nav-btn { justify-content: center; padding: 12px; }
+  .nav-btn.active::before { display: none; }
+  .form-grid { grid-template-columns: repeat(2, 1fr); }
+  .view { padding: 20px 16px; }
+}
+@media (max-width: 640px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon"><i class="fa-solid fa-calendar-star" style="color:#fff"></i></div>
+      <span>IC 2.0</span>
+    </div>
+    <div class="logo-sub">Influencer Calendar</div>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn" data-key="create">
+      <i class="nav-icon fa-solid fa-plus"></i>
+      <span class="nav-label">Create</span>
+    </button>
+    <button class="nav-btn" data-key="calendar">
+      <i class="nav-icon fa-regular fa-calendar"></i>
+      <span class="nav-label">Calendar</span>
+    </button>
+    <button class="nav-btn" data-key="list">
+      <i class="nav-icon fa-solid fa-table-list"></i>
+      <span class="nav-label">List & Analytics</span>
+    </button>
+    <button class="nav-btn" data-key="settings">
+      <i class="nav-icon fa-solid fa-gear"></i>
+      <span class="nav-label">Settings / Import</span>
+    </button>
+    <button class="nav-btn" data-key="notify">
+      <i class="nav-icon fa-regular fa-bell"></i>
+      <span class="nav-label">Notifications</span>
+      <span class="nav-notif-badge" id="nav-notif-badge">0</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">v2.0 · Built with ♥</div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+  <!-- CREATE -->
+  <section class="view" id="view-create">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Create Entry</div>
+        <div class="page-subtitle">Schedule a new influencer collaboration</div>
+      </div>
+    </div>
+    <div id="create-alert"></div>
+    <div class="card">
+      <div class="form-section-title">Post Schedule</div>
+      <div class="form-grid">
+        <div class="field"><label>Year</label><select id="c-year"></select></div>
+        <div class="field"><label>Month</label><select id="c-month"></select></div>
+        <div class="field"><label>Date</label><select id="c-date"></select></div>
+        <div class="field"><label>Time</label><select id="c-time"></select></div>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Influencer Name / ID</label><input id="c-influencer" placeholder="@handle or name"/></div>
+        <div class="field"><label>Brand Name</label><input id="c-brand" placeholder="Brand name"/></div>
+        <div class="field"><label>Platform</label>
+          <select id="c-platform">
+            <option>Instagram</option>
+            <option>Youtube</option>
+            <option>Facebook</option>
+          </select>
+        </div>
+        <div class="field"><label>Price (₹)</label><input id="c-price" type="number" min="0" placeholder="0"/></div>
+      </div>
+      <hr class="divider"/>
+      <div class="form-section-title">Payment Details</div>
+      <div class="form-grid">
+        <div class="field"><label>When to Pay</label>
+          <select id="c-when">
+            <option>Before</option>
+            <option>After</option>
+          </select>
+        </div>
+        <div class="field"><label>Pay Year</label><select id="p-year"></select></div>
+        <div class="field"><label>Pay Month</label><select id="p-month"></select></div>
+        <div class="field"><label>Pay Date</label><select id="p-date"></select></div>
+      </div>
+      <div style="margin-top:20px">
+        <button class="btn btn-primary" id="btn-save">
+          <i class="fa-solid fa-floppy-disk"></i> Save Entry
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDAR -->
+  <section class="view" id="view-calendar">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Calendar</div>
+        <div class="page-subtitle">Monthly view of all scheduled posts</div>
+      </div>
+      <div class="cal-controls">
+        <div class="cal-nav">
+          <button id="btn-prev-month"><i class="fa-solid fa-chevron-left"></i></button>
+          <span class="cal-label" id="cal-label">— —</span>
+          <button id="btn-next-month"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="btn-today">Today</button>
+      </div>
+    </div>
+    <div class="cal-grid-wrap">
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+  </section>
+
+  <!-- LIST -->
+  <section class="view" id="view-list">
+    <div class="page-header">
+      <div>
+        <div class="page-title">List & Analytics</div>
+        <div class="page-subtitle">All entries with summary statistics</div>
+      </div>
+    </div>
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card accent-card">
+        <div class="stat-label">Total Spend</div>
+        <div class="stat-value" id="stat-total">₹0</div>
+        <div class="stat-sub">across all campaigns</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Entries</div>
+        <div class="stat-value" id="stat-count">0</div>
+        <div class="stat-sub">influencer deals</div>
+      </div>
+      <div class="stat-card green-card">
+        <div class="stat-label">Posted</div>
+        <div class="stat-value" id="stat-posted">0</div>
+        <div class="stat-sub">completed posts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Paid</div>
+        <div class="stat-value" id="stat-paid">0</div>
+        <div class="stat-sub">payments done</div>
+      </div>
+    </div>
+    <div class="list-toolbar">
+      <input class="search-input" id="list-search" placeholder="Search influencer, brand…"/>
+      <div style="display:flex;gap:8px">
+        <select class="search-input" id="list-filter-platform" style="width:140px;padding-left:12px;background-image:none">
+          <option value="">All Platforms</option>
+          <option>Instagram</option>
+          <option>Youtube</option>
+          <option>Facebook</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="table-list">
+        <thead><tr>
+          <th>Date</th><th>Time</th><th>Influencer</th><th>Brand</th>
+          <th>Platform</th><th>Price</th><th>When</th><th>Pay Date</th>
+          <th>Posted</th><th>Paid</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="view" id="view-settings">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Settings / Import</div>
+        <div class="page-subtitle">Import, export and manage your data</div>
+      </div>
+    </div>
+    <div class="settings-grid">
+      <div class="card">
+        <div class="settings-section-title"><i class="fa-solid fa-file-import"></i> Import CSV</div>
+        <div class="file-drop" id="file-drop">
+          <input type="file" id="csv-input" accept=".csv"/>
+          <div class="drop-icon">📂</div>
+          <div class="drop-text">Drop CSV file or click to browse</div>
+          <div class="drop-hint" id="file-name-hint">No file selected</div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" id="btn-import"><i class="fa-solid fa-upload"></i> Import</button>
+          <button class="btn btn-ghost btn-sm" id="btn-sample"><i class="fa-solid fa-vial"></i> Load Sample</button>
+        </div>
+        <div class="csv-hint">Columns: year, month, date, time, influencer, brand, platform, price, whenToPay, payYear, payMonth, payDate, posted, paid</div>
+      </div>
+      <div class="card">
+        <div class="settings-section-title"><i class="fa-solid fa-file-export"></i> Export Data</div>
+        <p style="font-size:13px;color:var(--ink3);margin-bottom:16px;line-height:1.6">Download all your influencer entries as a CSV file. You can re-import this file later or open it in Excel / Google Sheets.</p>
+        <button class="btn btn-green" id="btn-export">
+          <i class="fa-solid fa-download"></i> Export CSV
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTIFICATIONS -->
+  <section class="view" id="view-notify">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Notifications</div>
+        <div class="page-subtitle">Post and payment alerts across all campaigns</div>
+      </div>
+    </div>
+    <div class="notif-grid">
+      <div class="notif-panel">
+        <div class="notif-panel-head">
+          <div class="notif-panel-title">
+            <i class="fa-regular fa-calendar-check" style="color:var(--accent)"></i>
+            Post Alerts
+          </div>
+          <span class="notif-count" id="post-count">0</span>
+        </div>
+        <div class="notif-list" id="notif-post-list">
+          <div class="notif-empty">No post alerts</div>
+        </div>
+      </div>
+      <div class="notif-panel">
+        <div class="notif-panel-head">
+          <div class="notif-panel-title">
+            <i class="fa-solid fa-indian-rupee-sign" style="color:var(--green)"></i>
+            Payment Alerts
+          </div>
+          <span class="notif-count" id="pay-count">0</span>
+        </div>
+        <div class="notif-list" id="notif-pay-list">
+          <div class="notif-empty">No payment alerts</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast-box"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// LOCAL STORAGE PERSISTENCE
+// ══════════════════════════════════════════════════════
+const STORAGE_KEY = 'ic_items';
+
+function storageGetAll() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+function storageSave(items) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+function apiList(params = {}) {
+  let items = storageGetAll();
+  if (params.year) items = items.filter(x => x.year === +params.year);
+  if (params.month) items = items.filter(x => x.month === +params.month);
+  return items;
+}
+
+function apiCreate(payload) {
+  const items = storageGetAll();
+  // Duplicate check
+  const dup = items.find(x =>
+    x.year === payload.year && x.month === payload.month && x.date === payload.date &&
+    x.time === payload.time && x.influencer === payload.influencer && x.brand === payload.brand &&
+    x.platform === payload.platform
+  );
+  if (dup) throw new Error('DUPLICATE');
+  payload.id = Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  items.push(payload);
+  storageSave(items);
+  return payload;
+}
+
+function apiUpdate(id, patch) {
+  const items = storageGetAll();
+  const idx = items.findIndex(x => x.id === id);
+  if (idx === -1) throw new Error('Not found');
+  Object.assign(items[idx], patch);
+  storageSave(items);
+  return items[idx];
+}
+
+function apiDelete(id) {
+  let items = storageGetAll();
+  items = items.filter(x => x.id !== id);
+  storageSave(items);
+  return { ok: true };
+}
+
+function apiExportCSV() {
+  const items = storageGetAll();
+  const cols = ['year','month','date','time','influencer','brand','platform','price','whenToPay','payYear','payMonth','payDate','posted','paid'];
+  let csv = cols.join(',') + '\n';
+  for (const it of items) {
+    csv += cols.map(c => {
+      let v = it[c] ?? '';
+      if (typeof v === 'string' && (v.includes(',') || v.includes('"'))) v = '"' + v.replace(/"/g, '""') + '"';
+      return v;
+    }).join(',') + '\n';
+  }
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'influencer_calendar_export.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function apiImportCSV(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const lines = reader.result.split('\n').filter(l => l.trim());
+        if (lines.length < 2) { reject(new Error('Empty CSV')); return; }
+        const headers = lines[0].split(',').map(h => h.trim());
+        const items = storageGetAll();
+        let imported = 0, skipped = 0;
+        for (let i = 1; i < lines.length; i++) {
+          const vals = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+          const row = {};
+          headers.forEach((h, idx) => { row[h] = vals[idx] || ''; });
+          row.year = +row.year || 0; row.month = +row.month || 0; row.date = +row.date || 0;
+          row.price = +(row.price) || 0;
+          row.payYear = +row.payYear || 0; row.payMonth = +row.payMonth || 0; row.payDate = +row.payDate || 0;
+          row.posted = row.posted === 'true' || row.posted === '1';
+          row.paid = row.paid === 'true' || row.paid === '1';
+          const dup = items.find(x =>
+            x.year === row.year && x.month === row.month && x.date === row.date &&
+            x.time === row.time && x.influencer === row.influencer && x.brand === row.brand
+          );
+          if (dup) { skipped++; continue; }
+          row.id = Date.now() + '_' + Math.random().toString(36).slice(2, 8) + '_' + i;
+          items.push(row);
+          imported++;
+        }
+        storageSave(items);
+        resolve({ imported, skipped_duplicates: skipped });
+      } catch (e) { reject(e); }
+    };
+    reader.onerror = () => reject(new Error('File read failed'));
+    reader.readAsText(file);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+const $ = sel => document.querySelector(sel);
+const pad = n => String(n).padStart(2, '0');
+function nowParts() {
+  const d = new Date();
+  return { Y: d.getFullYear(), M: d.getMonth() + 1, D: d.getDate(), T: `${pad(d.getHours())}:${pad(d.getMinutes())}` };
+}
+function monthDays(y, m) { return new Date(y, m, 0).getDate(); }
+function parseTimeToDate(y, m, d, time) {
+  const [hh, mm] = (time || '00:00').split(':').map(Number);
+  return new Date(y, m - 1, d, hh, mm, 0, 0);
+}
+function sameDay(a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ══════════════════════════════════════════════════════
+// GLOBAL STATE — single source of truth (ALL items)
+// ══════════════════════════════════════════════════════
+let ITEMS = [];
+
+function loadAllItems() {
+  ITEMS = apiList(); // reads from localStorage
+}
+
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+const VIEWS = ['create','calendar','list','settings','notify'];
+
+function showView(key) {
+  VIEWS.forEach(k => {
+    document.getElementById(`view-${k}`).classList.toggle('active', k === key);
+    document.querySelector(`.nav-btn[data-key="${k}"]`).classList.toggle('active', k === key);
+  });
+  if (key === 'calendar') renderCalendar();
+  if (key === 'list') renderList();
+  if (key === 'notify') renderNotifications();
+}
+
+document.querySelectorAll('.nav-btn').forEach(btn =>
+  btn.addEventListener('click', () => showView(btn.dataset.key))
+);
+
+// ══════════════════════════════════════════════════════
+// FORM HELPERS
+// ══════════════════════════════════════════════════════
+function opt(value, selected = false, label) {
+  const o = document.createElement('option');
+  o.value = value; o.textContent = label || value;
+  if (selected) o.selected = true;
+  return o;
+}
+function rebuildDates(ySel, mSel, dSel) {
+  const cur = parseInt(dSel.value) || 1;
+  const days = monthDays(parseInt(ySel.value), parseInt(mSel.value));
+  dSel.innerHTML = '';
+  for (let d = 1; d <= days; d++) dSel.appendChild(opt(d, d === Math.min(cur, days)));
+}
+function syncPayDefaults() {
+  const Y = parseInt($('#c-year').value), M = parseInt($('#c-month').value), D = parseInt($('#c-date').value);
+  const py = $('#p-year'), pm = $('#p-month'), pd = $('#p-date');
+  const curPY = parseInt(py.value) || Y;
+  py.innerHTML = ''; for (let y = Y - 1; y <= Y + 2; y++) py.appendChild(opt(y, y === Y));
+  pm.innerHTML = ''; for (let m = 1; m <= 12; m++) pm.appendChild(opt(m, m === M, MONTH_SHORT[m - 1]));
+  rebuildDates(py, pm, pd);
+  let due = new Date(Y, M - 1, D);
+  if ($('#c-when').value === 'After') due.setDate(due.getDate() + 1);
+  py.value = String(due.getFullYear());
+  pm.value = String(due.getMonth() + 1);
+  rebuildDates(py, pm, pd);
+  pd.value = String(due.getDate());
+}
+function fillYearMonthDateTime() {
+  const { Y, M, D, T } = nowParts();
+  const ey = $('#c-year'), em = $('#c-month'), ed = $('#c-date'), et = $('#c-time');
+  ey.innerHTML = ''; for (let y = Y - 1; y <= Y + 2; y++) ey.appendChild(opt(y, y === Y));
+  em.innerHTML = ''; for (let m = 1; m <= 12; m++) em.appendChild(opt(m, m === M, MONTH_SHORT[m - 1]));
+  rebuildDates(ey, em, ed); ed.value = D;
+  et.innerHTML = '';
+  for (let h = 0; h < 24; h++) for (let mm of [0, 30]) et.appendChild(opt(`${pad(h)}:${pad(mm)}`));
+  et.value = T;
+  syncPayDefaults();
+}
+
+$('#c-year').addEventListener('change', () => { rebuildDates($('#c-year'), $('#c-month'), $('#c-date')); syncPayDefaults(); });
+$('#c-month').addEventListener('change', () => { rebuildDates($('#c-year'), $('#c-month'), $('#c-date')); syncPayDefaults(); });
+$('#c-date').addEventListener('change', syncPayDefaults);
+$('#c-when').addEventListener('change', syncPayDefaults);
+$('#p-year').addEventListener('change', () => rebuildDates($('#p-year'), $('#p-month'), $('#p-date')));
+$('#p-month').addEventListener('change', () => rebuildDates($('#p-year'), $('#p-month'), $('#p-date')));
+
+// ══════════════════════════════════════════════════════
+// BANNER & TOAST
+// ══════════════════════════════════════════════════════
+function showBanner(el, kind, text, ms = 3000) {
+  el.innerHTML = `<div class="alert alert-${kind}">${text}</div>`;
+  if (ms > 0) setTimeout(() => { if (el) el.innerHTML = ''; }, ms);
+}
+
+const toastBox = $('#toast-box');
+function beep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = 880; o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.02);
+    o.start(); o.stop(ctx.currentTime + 0.25);
+  } catch (e) {}
+}
+function toast(kind, msg) {
+  const t = document.createElement('div');
+  t.className = `toast toast-${kind}`;
+  const ico = kind === 'warn' ? '⚠️' : kind === 'ok' ? '✅' : '❌';
+  t.innerHTML = `<span>${ico}</span><span>${msg}</span>`;
+  toastBox.appendChild(t);
+  beep();
+  setTimeout(() => t.remove(), 4500);
+}
+
+// ══════════════════════════════════════════════════════
+// CREATE
+// ══════════════════════════════════════════════════════
+$('#btn-save').addEventListener('click', () => {
+  const influencer = $('#c-influencer').value.trim();
+  const brand = $('#c-brand').value.trim();
+  if (!influencer || !brand) {
+    showBanner($('#create-alert'), 'warn', 'Please fill in Influencer and Brand fields.'); return;
+  }
+  const item = {
+    year: +$('#c-year').value, month: +$('#c-month').value, date: +$('#c-date').value, time: $('#c-time').value,
+    influencer, brand, platform: $('#c-platform').value,
+    price: +(+$('#c-price').value || 0), whenToPay: $('#c-when').value,
+    payYear: +$('#p-year').value, payMonth: +$('#p-month').value, payDate: +$('#p-date').value,
+    posted: false, paid: false, postedAt: null, paidAt: null
+  };
+  try {
+    apiCreate(item);
+    showBanner($('#create-alert'), 'ok', '✓ Entry saved successfully.', 3000);
+    $('#c-influencer').value = ''; $('#c-brand').value = ''; $('#c-price').value = '';
+    loadAllItems();
+    renderCalendar(); renderList(); renderNotifications();
+  } catch (e) {
+    if (String(e.message).includes('DUPLICATE'))
+      showBanner($('#create-alert'), 'bad', 'This entry already exists (duplicate detected).', 4000);
+    else
+      showBanner($('#create-alert'), 'bad', 'Save failed.', 4000);
+  }
+});
+
+// ══════════════════════════════════════════════════════
+// CALENDAR  — BUG FIXED: uses local month filter, does NOT overwrite ITEMS
+// ══════════════════════════════════════════════════════
+let viewY = nowParts().Y, viewM = nowParts().M;
+
+function platformBadge(p) {
+  if (p === 'Instagram') return '<span class="badge badge-ig">IG</span>';
+  if (p === 'Youtube')   return '<span class="badge badge-yt">YT</span>';
+  return '<span class="badge badge-fb">FB</span>';
+}
+
+function renderCalendar() {
+  const monthItems = apiList({ year: viewY, month: viewM });
+
+  $('#cal-label').textContent = `${MONTH_NAMES[viewM - 1]} ${viewY}`;
+  const grid = $('#cal-grid'); grid.innerHTML = '';
+  const today = nowParts();
+
+  // Weekday headers
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(w => {
+    const h = document.createElement('div'); h.className = 'cal-weekday'; h.textContent = w; grid.appendChild(h);
+  });
+
+  const firstDay = new Date(viewY, viewM - 1, 1).getDay();
+  const days = monthDays(viewY, viewM);
+
+  for (let i = 0; i < firstDay; i++) {
+    const e = document.createElement('div'); e.className = 'cal-cell empty'; grid.appendChild(e);
+  }
+
+  for (let d = 1; d <= days; d++) {
+    const cell = document.createElement('div'); cell.className = 'cal-cell';
+    const list = monthItems.filter(x => x.date === d);
+    const isToday = d === today.D && viewM === today.M && viewY === today.Y;
+    if (isToday) cell.classList.add('today');
+    if (list.length > 0 && list.every(x => x.posted)) cell.classList.add('all-posted');
+
+    const dn = document.createElement('div'); dn.className = 'cal-day-num'; dn.textContent = d; cell.appendChild(dn);
+
+    list.forEach(item => {
+      const e = document.createElement('div'); e.className = 'cal-entry';
+      e.dataset.id = item.id;
+
+      // View mode
+      const viewMode = document.createElement('div'); viewMode.className = 'entry-view-mode';
+      viewMode.innerHTML = `
+        <div class="entry-name">${item.influencer}</div>
+        <div class="entry-meta">${item.brand} ${platformBadge(item.platform)} <span style="color:var(--ink2)">₹${(+item.price).toLocaleString()}</span> <span>${item.time || ''}</span></div>`;
+
+      const checks = document.createElement('div'); checks.className = 'entry-checks';
+      const cbPost = document.createElement('input'); cbPost.type = 'checkbox'; cbPost.checked = item.posted;
+      const lPost = document.createElement('label'); lPost.append(cbPost, ' Posted');
+      const cbPaid = document.createElement('input'); cbPaid.type = 'checkbox'; cbPaid.checked = item.paid;
+      const lPaid = document.createElement('label'); lPaid.append(cbPaid, ' Paid');
+      checks.append(lPost, lPaid);
+      viewMode.appendChild(checks);
+
+      // Edit mode (hidden)
+      const editMode = document.createElement('div'); editMode.className = 'entry-edit-mode'; editMode.style.display = 'none';
+      editMode.innerHTML = `
+        <input class="mini-input" data-field="influencer" value="${item.influencer}" placeholder="Influencer"/>
+        <input class="mini-input" data-field="brand" value="${item.brand}" placeholder="Brand" style="margin-top:3px"/>
+        <select class="mini-select" data-field="platform" style="margin-top:3px">
+          <option>Instagram</option><option>Youtube</option><option>Facebook</option>
+        </select>
+        <input class="mini-input" data-field="price" type="number" value="${item.price}" placeholder="Price" style="margin-top:3px"/>
+        <input class="mini-input" data-field="time" value="${item.time||''}" placeholder="HH:MM" style="margin-top:3px"/>
+      `;
+      editMode.querySelector('[data-field="platform"]').value = item.platform;
+
+      const actions = document.createElement('div'); actions.className = 'entry-actions';
+      const bEdit = document.createElement('button'); bEdit.innerHTML = '<i class="fa-solid fa-pen"></i> Edit';
+      const bSave = document.createElement('button'); bSave.innerHTML = '<i class="fa-solid fa-check"></i> Save'; bSave.style.display = 'none';
+      const bCancel = document.createElement('button'); bCancel.innerHTML = 'Cancel'; bCancel.style.display = 'none';
+      const bDel = document.createElement('button'); bDel.innerHTML = '<i class="fa-solid fa-trash"></i>'; bDel.className = 'del-btn';
+      actions.append(bEdit, bSave, bCancel, bDel);
+
+      e.append(viewMode, editMode, actions);
+      cell.appendChild(e);
+
+      // Edit toggle
+      bEdit.addEventListener('click', () => {
+        viewMode.style.display = 'none'; editMode.style.display = 'block';
+        bEdit.style.display = 'none'; bSave.style.display = ''; bCancel.style.display = '';
+      });
+      bCancel.addEventListener('click', () => {
+        viewMode.style.display = ''; editMode.style.display = 'none';
+        bEdit.style.display = ''; bSave.style.display = 'none'; bCancel.style.display = 'none';
+      });
+
+      // Save edit — price cast to float
+      bSave.addEventListener('click', () => {
+        const patch = {
+          influencer: editMode.querySelector('[data-field="influencer"]').value,
+          brand: editMode.querySelector('[data-field="brand"]').value,
+          platform: editMode.querySelector('[data-field="platform"]').value,
+          price: parseFloat(editMode.querySelector('[data-field="price"]').value || 0),
+          time: editMode.querySelector('[data-field="time"]').value,
+          posted: cbPost.checked,
+          paid: cbPaid.checked
+        };
+        try {
+          apiUpdate(item.id, patch);
+          loadAllItems();
+          renderCalendar(); renderList(); renderNotifications();
+        } catch { toast('bad', 'Update failed'); }
+      });
+
+      // Checkbox quick-save
+      cbPost.addEventListener('change', () => {
+        try { apiUpdate(item.id, { posted: cbPost.checked, paid: cbPaid.checked }); loadAllItems(); renderList(); renderNotifications(); }
+        catch { cbPost.checked = !cbPost.checked; }
+      });
+      cbPaid.addEventListener('change', () => {
+        try { apiUpdate(item.id, { posted: cbPost.checked, paid: cbPaid.checked }); loadAllItems(); renderList(); renderNotifications(); }
+        catch { cbPaid.checked = !cbPaid.checked; }
+      });
+
+      // Delete
+      bDel.addEventListener('click', () => {
+        if (!confirm(`Delete entry for ${item.influencer} (${item.brand})?`)) return;
+        try {
+          apiDelete(item.id);
+          loadAllItems();
+          renderCalendar(); renderList(); renderNotifications();
+        } catch { toast('bad', 'Delete failed'); }
+      });
+    });
+
+    grid.appendChild(cell);
+  }
+}
+
+// Calendar navigation — proper prev/next with year wrap
+$('#btn-prev-month').addEventListener('click', () => {
+  viewM--; if (viewM < 1) { viewM = 12; viewY--; } renderCalendar();
+});
+$('#btn-next-month').addEventListener('click', () => {
+  viewM++; if (viewM > 12) { viewM = 1; viewY++; } renderCalendar();
+});
+$('#btn-today').addEventListener('click', () => {
+  const { Y, M } = nowParts(); viewY = Y; viewM = M; renderCalendar();
+});
+
+// ══════════════════════════════════════════════════════
+// LIST & ANALYTICS — BUG FIXED: always reads full ITEMS
+// ══════════════════════════════════════════════════════
+function renderList() {
+  const search = ($('#list-search').value || '').toLowerCase();
+  const platform = $('#list-filter-platform').value;
+
+  let items = [...ITEMS].filter(it => {
+    const matchSearch = !search ||
+      it.influencer.toLowerCase().includes(search) ||
+      it.brand.toLowerCase().includes(search);
+    const matchPlat = !platform || it.platform === platform;
+    return matchSearch && matchPlat;
+  });
+  items.sort((a, b) => parseTimeToDate(a.year, a.month, a.date, a.time) - parseTimeToDate(b.year, b.month, b.date, b.time));
+
+  const tbody = document.querySelector('#table-list tbody'); tbody.innerHTML = '';
+  for (const it of items) {
+    const tr = document.createElement('tr');
+    const ds = `${it.year}-${pad(it.month)}-${pad(it.date)}`;
+    const ps = `${it.payYear || it.year}-${pad(it.payMonth || it.month)}-${pad(it.payDate || it.date)}`;
+    const wb = it.whenToPay === 'Before' ? '<span class="pill pill-before">Before</span>' : '<span class="pill pill-after">After</span>';
+    tr.innerHTML = `
+      <td>${ds}</td><td>${it.time || '—'}</td>
+      <td style="color:var(--ink);font-weight:500">${it.influencer}</td>
+      <td>${it.brand}</td>
+      <td>${platformBadge(it.platform)} ${it.platform}</td>
+      <td style="color:var(--accent2);font-weight:600">₹${(+it.price).toLocaleString()}</td>
+      <td>${wb}</td><td>${ps}</td>
+      <td><span class="pill ${it.posted ? 'pill-yes' : 'pill-no'}">${it.posted ? 'Yes' : 'No'}</span></td>
+      <td><span class="pill ${it.paid ? 'pill-yes' : 'pill-no'}">${it.paid ? 'Yes' : 'No'}</span></td>`;
+    tbody.appendChild(tr);
+  }
+
+  // Analytics stats
+  const all = ITEMS;
+  const total = all.reduce((s, x) => s + (+x.price || 0), 0);
+  $('#stat-total').textContent = `₹${total.toLocaleString()}`;
+  $('#stat-count').textContent = all.length;
+  $('#stat-posted').textContent = all.filter(x => x.posted).length;
+  $('#stat-paid').textContent = all.filter(x => x.paid).length;
+}
+
+$('#list-search').addEventListener('input', renderList);
+$('#list-filter-platform').addEventListener('change', renderList);
+
+// ══════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════
+const csvInput = $('#csv-input');
+csvInput.addEventListener('change', () => {
+  const f = csvInput.files[0];
+  $('#file-name-hint').textContent = f ? f.name : 'No file selected';
+});
+$('#btn-export').addEventListener('click', () => apiExportCSV());
+$('#btn-import').addEventListener('click', async () => {
+  const file = csvInput.files[0];
+  if (!file) { toast('warn', 'Please select a CSV file first'); return; }
+  try {
+    const res = await apiImportCSV(file);
+    toast('ok', `Imported: ${res.imported} · Skipped duplicates: ${res.skipped_duplicates}`);
+    loadAllItems(); renderCalendar(); renderList(); renderNotifications();
+  } catch { toast('bad', 'Import failed — check your CSV format'); }
+});
+
+$('#btn-sample').addEventListener('click', () => {
+  const { D } = nowParts();
+  const base = [
+    { year: viewY, month: viewM, date: D, time: '10:00', influencer: '@raj_creates', brand: 'NeatMagic', platform: 'Instagram', price: 3000, whenToPay: 'After', posted: false, paid: false },
+    { year: viewY, month: viewM, date: Math.min(D + 1, monthDays(viewY, viewM)), time: '14:00', influencer: '@kumar_vlogs', brand: 'BetterMagic', platform: 'Youtube', price: 4000, whenToPay: 'Before', posted: false, paid: false }
+  ];
+  let added = 0;
+  for (const b of base) {
+    const due = new Date(b.year, b.month - 1, b.date + (b.whenToPay === 'After' ? 1 : 0));
+    try {
+      apiCreate({ ...b, payYear: due.getFullYear(), payMonth: due.getMonth() + 1, payDate: due.getDate() });
+      added++;
+    } catch { /* skip duplicates */ }
+  }
+  if (added > 0) {
+    toast('ok', `Loaded ${added} sample entries`);
+    loadAllItems(); renderCalendar(); renderList(); renderNotifications();
+  } else {
+    toast('warn', 'Sample data already exists');
+  }
+});
+
+// ══════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════════════
+function buildMessages(items, now) {
+  const msgs = [];
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  for (const it of items) {
+    const postAt = parseTimeToDate(it.year, it.month, it.date, it.time);
+    const postDay = new Date(postAt.getFullYear(), postAt.getMonth(), postAt.getDate());
+    const postWarn = new Date(postDay); postWarn.setDate(postWarn.getDate() - 1);
+    const payDay = new Date((it.payYear || it.year), (it.payMonth || it.month) - 1, (it.payDate || it.date));
+    const payWarn = new Date(payDay); payWarn.setDate(payWarn.getDate() - 1);
+
+    if (sameDay(today, postWarn) && !it.posted) msgs.push({ cat: 'post', type: 'warn', msg: `Upcoming Post · ${it.influencer} (${it.brand}) · ${it.year}-${pad(it.month)}-${pad(it.date)} ${it.time}`, popup: true });
+    if (it.posted) msgs.push({ cat: 'post', type: 'ok', msg: `Posted ✔ ${it.influencer} on ${it.year}-${pad(it.month)}-${pad(it.date)} ${it.time}` });
+    if (today > postDay && !it.posted) msgs.push({ cat: 'post', type: 'bad', msg: `Missed Post ❗ ${it.influencer} · scheduled ${it.year}-${pad(it.month)}-${pad(it.date)} ${it.time}`, popup: true });
+    if (sameDay(today, payWarn) && !it.paid) msgs.push({ cat: 'pay', type: 'warn', msg: `Upcoming Payment · ${it.influencer} · ₹${it.price} · due ${payDay.getFullYear()}-${pad(payDay.getMonth() + 1)}-${pad(payDay.getDate())}`, popup: true });
+    if (it.paid) msgs.push({ cat: 'pay', type: 'ok', msg: `Payment Done ✔ ₹${it.price} to ${it.influencer}` });
+    if (today > payDay && !it.paid) msgs.push({ cat: 'pay', type: 'bad', msg: `Payment Overdue ❗ ₹${it.price} · ${it.influencer} · due ${payDay.getFullYear()}-${pad(payDay.getMonth() + 1)}-${pad(payDay.getDate())}`, popup: true });
+  }
+  const seen = new Set();
+  return msgs.filter(m => { const k = m.cat + ':' + m.type + ':' + m.msg; if (seen.has(k)) return false; seen.add(k); return true; });
+}
+
+function renderNotifications(withPopups = false) {
+  const postList = $('#notif-post-list'), payList = $('#notif-pay-list');
+  postList.innerHTML = ''; payList.innerHTML = '';
+  const msgs = buildMessages(ITEMS, new Date());
+  const counts = { post: 0, pay: 0 };
+  const icoMap = { warn: '⚠️', ok: '✅', bad: '❌' };
+
+  for (const n of msgs) {
+    const row = document.createElement('div'); row.className = `notif-item ${n.type}`;
+    row.innerHTML = `<div class="notif-ico">${icoMap[n.type]}</div><div class="notif-text">${n.msg}</div>`;
+    if (n.cat === 'post') { postList.appendChild(row); counts.post++; }
+    else { payList.appendChild(row); counts.pay++; }
+    if (withPopups && n.popup) toast(n.type, n.msg);
+  }
+  if (counts.post === 0) postList.innerHTML = '<div class="notif-empty">No post alerts 🎉</div>';
+  if (counts.pay === 0) payList.innerHTML = '<div class="notif-empty">No payment alerts 🎉</div>';
+
+  $('#post-count').textContent = counts.post;
+  $('#pay-count').textContent = counts.pay;
+
+  // Nav badge
+  const urgent = msgs.filter(m => m.type === 'bad' || m.type === 'warn').length;
+  const badge = $('#nav-notif-badge');
+  badge.textContent = urgent; badge.classList.toggle('show', urgent > 0);
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+(function init() {
+  fillYearMonthDateTime();
+  showView('create');
+  loadAllItems();
+  renderCalendar();
+  renderList();
+  renderNotifications(true);
+})();
+</script>
+</body>
+</html>
