@@ -1062,14 +1062,25 @@ tbody tr:hover td { background: var(--surface2); color: var(--ink); }
   .cal-cell {
     min-height: 70px;
     padding: 5px;
+    min-width: 120px;
   }
 
   .cal-grid-wrap {
     padding: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .cal-grid-wrap::-webkit-scrollbar {
+    display: none;
   }
 
   .cal-grid {
     gap: 4px;
+    min-width: max-content;
   }
 
   .cal-entry .entry-name {
