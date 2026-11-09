@@ -671,8 +671,13 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
+/* ── Table Columns Polish ── */
+#table-list th, #table-list td { white-space: nowrap; }
+#table-list th:nth-child(3), #table-list td:nth-child(3) { width: 22%; min-width: 140px; white-space: normal; }
+#table-list th:nth-child(4), #table-list td:nth-child(4) { width: 20%; min-width: 120px; white-space: normal; }
 table { width: 100%; border-collapse: collapse; }
 thead tr { border-bottom: 1px solid var(--border); }
 th {
@@ -825,6 +830,481 @@ tbody tr:hover td { background: var(--surface2); color: var(--ink); }
 /* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
+/* ══════════════════════════════════════
+   PREMIUM ANALYTICS DASHBOARD
+══════════════════════════════════════ */
+
+/* ── Analytics Header ── */
+.analytics-header {
+  margin-bottom: 22px;
+}
+.analytics-header .page-subtitle {
+  color: var(--ink2);
+}
+
+/* ── Period Selector ── */
+.analytics-period {
+  min-width: 145px;
+}
+
+/* ── KPI Cards Grid ── */
+.analytics-kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+/* ── KPI Card ── */
+.analytics-kpi {
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+  min-height: 142px;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.analytics-kpi:hover {
+  transform: translateY(-3px);
+  border-color: rgba(225, 48, 108, 0.42);
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(225, 48, 108, 0.08);
+}
+
+/* Decorative glow circle */
+.analytics-kpi::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  right: -38px;
+  top: -42px;
+  background: rgba(225, 48, 108, 0.1);
+  transition: transform 0.35s ease;
+  pointer-events: none;
+}
+.analytics-kpi:hover::after {
+  transform: scale(1.2);
+}
+
+/* KPI variant — Orange (Total Spend) */
+.analytics-kpi.kpi-orange::after {
+  background: rgba(247, 119, 55, 0.13);
+}
+.analytics-kpi.kpi-orange:hover {
+  border-color: rgba(247, 119, 55, 0.45);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25), 0 0 20px rgba(247, 119, 55, 0.1);
+}
+
+/* KPI variant — Green (Posted / Paid) */
+.analytics-kpi.kpi-green::after {
+  background: rgba(34, 211, 160, 0.11);
+}
+.analytics-kpi.kpi-green:hover {
+  border-color: rgba(34, 211, 160, 0.4);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25), 0 0 20px rgba(34, 211, 160, 0.08);
+}
+
+/* KPI variant — Blue (Entries) */
+.analytics-kpi.kpi-blue::after {
+  background: rgba(56, 189, 248, 0.1);
+}
+.analytics-kpi.kpi-blue:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25), 0 0 20px rgba(56, 189, 248, 0.08);
+}
+
+/* ── KPI Top Row ── */
+.kpi-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink3);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── KPI Icon ── */
+.kpi-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(225, 48, 108, 0.27);
+  border-radius: 10px;
+  color: var(--accent2);
+  background: rgba(225, 48, 108, 0.1);
+  font-size: 13px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.analytics-kpi:hover .kpi-icon {
+  transform: scale(1.1);
+  box-shadow: 0 0 14px rgba(225, 48, 108, 0.18);
+}
+
+/* Icon color variants */
+.kpi-orange .kpi-icon {
+  color: var(--accent2);
+  border-color: rgba(247, 119, 55, 0.3);
+  background: rgba(247, 119, 55, 0.12);
+}
+.kpi-orange:hover .kpi-icon {
+  box-shadow: 0 0 14px rgba(247, 119, 55, 0.2);
+}
+.kpi-green .kpi-icon {
+  color: var(--green);
+  border-color: rgba(34, 211, 160, 0.26);
+  background: var(--green-bg);
+}
+.kpi-green:hover .kpi-icon {
+  box-shadow: 0 0 14px rgba(34, 211, 160, 0.2);
+}
+.kpi-blue .kpi-icon {
+  color: var(--blue);
+  border-color: rgba(56, 189, 248, 0.26);
+  background: var(--blue-bg);
+}
+.kpi-blue:hover .kpi-icon {
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.2);
+}
+
+/* ── KPI Value ── */
+.analytics-kpi .stat-value,
+.kpi-value {
+  font: 800 24px/1.1 var(--font-display);
+  margin-top: 12px;
+  letter-spacing: -0.5px;
+}
+
+/* ── KPI Meta ── */
+.kpi-meta {
+  margin-top: 5px;
+  color: var(--ink3);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+.kpi-meta strong {
+  color: var(--ink2);
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════
+   CHARTS GRID
+══════════════════════════════════════ */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ── Analytics Panel ── */
+.analytics-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-width: 0;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.analytics-panel:hover {
+  border-color: rgba(51, 51, 51, 0.95);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Panel Header ── */
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.panel-title {
+  font: 700 15px var(--font-display);
+  color: var(--ink);
+}
+.panel-subtitle {
+  color: var(--ink3);
+  font-size: 11.5px;
+  margin-top: 4px;
+}
+
+/* ── Chart Shell & Empty States ── */
+.chart-shell {
+  min-height: 180px;
+  position: relative;
+}
+.chart-empty,
+.table-empty {
+  min-height: 160px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--ink3);
+  font-size: 13px;
+  padding: 24px;
+}
+.chart-empty i {
+  font-size: 28px;
+  opacity: 0.4;
+  margin-bottom: 4px;
+}
+
+/* ── Spending Chart (SVG) ── */
+.spend-chart {
+  width: 100%;
+  height: 180px;
+  display: block;
+  overflow: visible;
+}
+.chart-gridline {
+  stroke: rgba(160, 160, 160, 0.12);
+  stroke-width: 1;
+}
+.chart-axis-label {
+  fill: var(--ink3);
+  font: 10px var(--font-body);
+}
+.chart-value-label {
+  fill: var(--ink2);
+  font: 10px var(--font-body);
+}
+.chart-bar {
+  fill: url(#spendingGradient);
+  cursor: default;
+  transition: opacity 0.18s ease, filter 0.18s ease;
+  filter: drop-shadow(0 2px 6px rgba(225, 48, 108, 0.12));
+}
+.chart-bar:hover {
+  opacity: 0.8;
+  filter: drop-shadow(0 4px 14px rgba(225, 48, 108, 0.28));
+}
+
+/* ══════════════════════════════════════
+   PERFORMANCE RINGS
+══════════════════════════════════════ */
+.performance-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  min-height: 180px;
+  align-items: center;
+}
+.ring-metric {
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+.ring-metric:hover {
+  transform: scale(1.04);
+}
+.ring {
+  width: 112px;
+  height: 112px;
+  margin: auto;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.12));
+}
+.ring-track {
+  fill: none;
+  stroke: var(--surface3);
+  stroke-width: 10;
+}
+.ring-progress {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ring-number {
+  font: 700 17px var(--font-display);
+  fill: var(--ink);
+  text-anchor: middle;
+}
+.ring-caption {
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 7px;
+}
+.ring-detail {
+  color: var(--ink3);
+  font-size: 10.5px;
+  margin-top: 3px;
+}
+
+/* ══════════════════════════════════════
+   PLATFORM BREAKDOWN
+══════════════════════════════════════ */
+.platform-panel {
+  margin-bottom: 22px;
+}
+.platform-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+}
+.platform-item {
+  background: var(--surface2);
+  border: 1px solid rgba(51, 51, 51, 0.7);
+  border-radius: 10px;
+  padding: 12px;
+  transition: border-color 0.2s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+.platform-item:hover {
+  border-color: rgba(225, 48, 108, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+.platform-name {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 600;
+}
+.platform-name span:last-child {
+  color: var(--ink3);
+  font-weight: 500;
+}
+.platform-bar {
+  height: 5px;
+  background: var(--surface3);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 10px 0 8px;
+}
+.platform-fill {
+  display: block;
+  height: 100%;
+  background: var(--gradient-ig);
+  border-radius: inherit;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.platform-meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink3);
+  font-size: 10.5px;
+}
+
+/* ══════════════════════════════════════
+   LIST PANEL & TABLE
+══════════════════════════════════════ */
+.list-panel {
+  padding: 0;
+  overflow: hidden;
+}
+.list-panel .panel-head {
+  padding: 20px 20px 0;
+}
+.list-panel .list-toolbar {
+  padding: 0 20px 18px;
+  margin: 0;
+}
+
+/* ── Filter Row ── */
+.analytics-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.analytics-filter-row .search-input {
+  min-width: 125px;
+}
+
+/* ── Sort Button ── */
+.sort-btn {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink2);
+  transition: color 0.15s ease;
+}
+.sort-btn:hover,
+.sort-btn:focus-visible {
+  color: var(--accent2);
+}
+.sort-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.sort-icon {
+  color: var(--ink3);
+  font-size: 9px;
+  transition: color 0.15s ease;
+}
+.sort-btn:hover .sort-icon {
+  color: var(--accent);
+}
+
+/* ── Table Enhancements ── */
+.list-panel .table-wrap {
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+}
+#table-list tbody tr {
+  transition: background 0.18s ease;
+}
+#table-list tbody tr:hover {
+  background: rgba(225, 48, 108, 0.055);
+}
+.status-pill {
+  min-width: 48px;
+  text-align: center;
+}
+
+/* ── Analytics Responsive ── */
+@media (max-width: 1100px) {
+  .analytics-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .analytics-kpis {
+    gap: 9px;
+  }
+  .analytics-kpi {
+    padding: 14px;
+    min-height: 130px;
+  }
+  .kpi-value,
+  .analytics-kpi .stat-value {
+    font-size: 21px;
+  }
+  .analytics-panel {
+    padding: 16px;
+  }
+  .list-panel .panel-head {
+    padding: 16px 16px 0;
+  }
+  .list-panel .list-toolbar {
+    padding: 0 16px 14px;
+  }
+  .analytics-filter-row {
+    width: 100%;
+  }
+  .analytics-filter-row .search-input {
+    width: 100% !important;
+  }
+  .performance-wrap {
+    min-height: 185px;
+  }
+}
 @media (max-width: 1100px) {
   .stats-row { grid-template-columns: repeat(2, 1fr); }
   .notif-grid { grid-template-columns: 1fr; }
@@ -1294,35 +1774,42 @@ tbody tr:hover td { background: var(--surface2); color: var(--ink); }
 
   <!-- LIST -->
   <section class="view" id="view-list">
-    <div class="page-header">
+    <div class="page-header analytics-header">
       <div>
         <div class="page-title">List & Analytics</div>
-        <div class="page-subtitle">All entries with summary statistics</div>
+        <div class="page-subtitle">Track campaigns, spending, and performance</div>
       </div>
+      <select class="search-input analytics-period" id="analytics-period" aria-label="Analytics period" style="padding-left:12px;background-image:none"><option value="all">All time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="year">This year</option></select>
     </div>
-    <div class="stats-row" id="stats-row">
-      <div class="stat-card accent-card">
-        <div class="stat-label">Total Spend</div>
+    <div class="stats-row analytics-kpis" id="stats-row">
+      <div class="stat-card analytics-kpi kpi-orange">
+        <div class="kpi-top"><span>TOTAL SPEND</span><i class="fa-solid fa-wallet kpi-icon"></i></div>
         <div class="stat-value" id="stat-total">₹0</div>
-        <div class="stat-sub">across all campaigns</div>
+        <div class="stat-sub kpi-meta">Across selected campaigns · <strong id="stat-unpaid">₹0 unpaid</strong></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Total Entries</div>
+      <div class="stat-card analytics-kpi kpi-blue">
+        <div class="kpi-top"><span>TOTAL ENTRIES</span><i class="fa-solid fa-users kpi-icon"></i></div>
         <div class="stat-value" id="stat-count">0</div>
-        <div class="stat-sub">influencer deals</div>
+        <div class="stat-sub kpi-meta">Influencer collaborations · <strong id="stat-average">₹0 avg.</strong></div>
       </div>
-      <div class="stat-card green-card">
-        <div class="stat-label">Posted</div>
+      <div class="stat-card analytics-kpi kpi-green">
+        <div class="kpi-top"><span>POSTED</span><i class="fa-solid fa-circle-check kpi-icon"></i></div>
         <div class="stat-value" id="stat-posted">0</div>
-        <div class="stat-sub">completed posts</div>
+        <div class="stat-sub kpi-meta">Completed posts · <strong id="stat-completion">0% completion</strong></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Paid</div>
+      <div class="stat-card analytics-kpi kpi-green">
+        <div class="kpi-top"><span>PAID</span><i class="fa-solid fa-indian-rupee-sign kpi-icon"></i></div>
         <div class="stat-value" id="stat-paid">0</div>
-        <div class="stat-sub">payments done</div>
+        <div class="stat-sub kpi-meta">Payments completed · <strong id="stat-paid-amount">₹0 paid</strong></div>
       </div>
     </div>
-    <div class="list-toolbar">
+    <div class="analytics-grid">
+      <section class="analytics-panel"><div class="panel-head"><div><div class="panel-title">Spending Overview</div><div class="panel-subtitle" id="spending-summary">Campaign investment over time</div></div></div><div class="chart-shell" id="spending-chart" aria-label="Spending overview chart"></div></section>
+      <section class="analytics-panel"><div class="panel-head"><div><div class="panel-title">Campaign Performance</div><div class="panel-subtitle">Posted and paid are tracked independently</div></div></div><div class="performance-wrap" id="performance-chart" aria-label="Campaign performance chart"></div></section>
+    </div>
+    <section class="analytics-panel platform-panel"><div class="panel-head"><div><div class="panel-title">Platform Breakdown</div><div class="panel-subtitle">Campaign distribution and investment by channel</div></div></div><div class="platform-list" id="platform-breakdown"></div></section>
+    <section class="analytics-panel list-panel"><div class="panel-head"><div><div class="panel-title">Campaigns</div><div class="panel-subtitle" id="table-summary">Search, filter, and sort your collaborations</div></div></div>
+    <div class="list-toolbar analytics-filter-row">
       <input class="search-input" id="list-search" placeholder="Search influencer, brand…"/>
       <div style="display:flex;gap:8px">
         <select class="search-input" id="list-filter-platform" style="width:140px;padding-left:12px;background-image:none">
@@ -1331,18 +1818,21 @@ tbody tr:hover td { background: var(--surface2); color: var(--ink); }
           <option>Youtube</option>
           <option>Facebook</option>
         </select>
+        <select class="search-input" id="list-filter-posted" aria-label="Filter by posted status" style="width:125px;padding-left:12px;background-image:none"><option value="">All posted</option><option value="yes">Posted</option><option value="no">Not posted</option></select>
+        <select class="search-input" id="list-filter-paid" aria-label="Filter by paid status" style="width:120px;padding-left:12px;background-image:none"><option value="">All paid</option><option value="yes">Paid</option><option value="no">Unpaid</option></select>
       </div>
     </div>
     <div class="table-wrap">
       <table id="table-list">
         <thead><tr>
-          <th>Date</th><th>Time</th><th>Influencer</th><th>Brand</th>
-          <th>Platform</th><th>Price</th><th>When</th><th>Pay Date</th>
-          <th>Posted</th><th>Paid</th>
+          <th><button class="sort-btn" data-sort="date">Date <i class="fa-solid fa-sort sort-icon"></i></button></th><th>Time</th><th><button class="sort-btn" data-sort="influencer">Influencer <i class="fa-solid fa-sort sort-icon"></i></button></th><th><button class="sort-btn" data-sort="brand">Brand <i class="fa-solid fa-sort sort-icon"></i></button></th>
+          <th>Platform</th><th><button class="sort-btn" data-sort="price">Price <i class="fa-solid fa-sort sort-icon"></i></button></th><th>When</th><th>Pay Date</th>
+          <th><button class="sort-btn" data-sort="posted">Posted <i class="fa-solid fa-sort sort-icon"></i></button></th><th><button class="sort-btn" data-sort="paid">Paid <i class="fa-solid fa-sort sort-icon"></i></button></th>
         </tr></thead>
         <tbody></tbody>
       </table>
     </div>
+    </section>
   </section>
 
   <!-- SETTINGS -->
@@ -1841,50 +2331,376 @@ $('#btn-today').addEventListener('click', () => {
 });
 
 // ══════════════════════════════════════════════════════
-// LIST & ANALYTICS — BUG FIXED: always reads full ITEMS
+// LIST & ANALYTICS — Premium Dashboard
 // ══════════════════════════════════════════════════════
-function renderList() {
-  const search = ($('#list-search').value || '').toLowerCase();
-  const platform = $('#list-filter-platform').value;
+let listSort = { key: 'date', direction: 1 };
 
-  let items = [...ITEMS].filter(it => {
-    const matchSearch = !search ||
-      it.influencer.toLowerCase().includes(search) ||
-      it.brand.toLowerCase().includes(search);
-    const matchPlat = !platform || it.platform === platform;
-    return matchSearch && matchPlat;
+/** Format a number as INR currency string */
+const analyticsCurrency = value =>
+  '\u20b9' + Math.round(Number(value) || 0).toLocaleString('en-IN');
+
+/** Convert an item's year/month/date fields to a Date object */
+const campaignDate = it =>
+  new Date(+it.year || 0, (+it.month || 1) - 1, +it.date || 1);
+
+/** Escape HTML special characters for safe rendering */
+const safeText = value =>
+  String(value != null ? value : '').replace(/[&<>"']/g, function(char) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
   });
-  items.sort((a, b) => parseTimeToDate(a.year, a.month, a.date, a.time) - parseTimeToDate(b.year, b.month, b.date, b.time));
 
-  const tbody = document.querySelector('#table-list tbody'); tbody.innerHTML = '';
-  for (const it of items) {
-    const tr = document.createElement('tr');
-    const ds = `${it.year}-${pad(it.month)}-${pad(it.date)}`;
-    const ps = `${it.payYear || it.year}-${pad(it.payMonth || it.month)}-${pad(it.payDate || it.date)}`;
-    const wb = it.whenToPay === 'Before' ? '<span class="pill pill-before">Before</span>' : '<span class="pill pill-after">After</span>';
-    tr.innerHTML = `
-      <td>${ds}</td><td>${it.time || '—'}</td>
-      <td style="color:var(--ink);font-weight:500">${it.influencer}</td>
-      <td>${it.brand}</td>
-      <td>${platformBadge(it.platform)} ${it.platform}</td>
-      <td style="color:var(--accent2);font-weight:600">₹${(+it.price).toLocaleString()}</td>
-      <td>${wb}</td><td>${ps}</td>
-      <td><span class="pill ${it.posted ? 'pill-yes' : 'pill-no'}">${it.posted ? 'Yes' : 'No'}</span></td>
-      <td><span class="pill ${it.paid ? 'pill-yes' : 'pill-no'}">${it.paid ? 'Yes' : 'No'}</span></td>`;
-    tbody.appendChild(tr);
+/**
+ * Get filtered ITEMS based on the selected analytics period.
+ * Returns a new array — never mutates the global ITEMS.
+ */
+function getAnalyticsItems() {
+  var periodEl = document.querySelector('#analytics-period');
+  var period = periodEl ? periodEl.value : 'all';
+  var now = new Date();
+  now.setHours(23, 59, 59, 999);
+
+  if (period === 'all') return ITEMS.slice();
+
+  var start = new Date(now);
+  if (period === 'year') {
+    start.setMonth(0, 1);
+    start.setHours(0, 0, 0, 0);
+  } else {
+    start.setDate(start.getDate() - Number(period) + 1);
+    start.setHours(0, 0, 0, 0);
   }
 
-  // Analytics stats
-  const all = ITEMS;
-  const total = all.reduce((s, x) => s + (+x.price || 0), 0);
-  $('#stat-total').textContent = `₹${total.toLocaleString()}`;
-  $('#stat-count').textContent = all.length;
-  $('#stat-posted').textContent = all.filter(x => x.posted).length;
-  $('#stat-paid').textContent = all.filter(x => x.paid).length;
+  return ITEMS.filter(function(item) {
+    var date = campaignDate(item);
+    return !Number.isNaN(date.getTime()) && date >= start && date <= now;
+  });
 }
 
+/**
+ * Compute aggregate analytics from a list of campaign items.
+ */
+function analyticsData(items) {
+  var total = items.reduce(function(sum, item) {
+    return sum + Math.max(0, Number(item.price) || 0);
+  }, 0);
+  var posted = items.filter(function(item) { return item.posted; }).length;
+  var paid = items.filter(function(item) { return item.paid; }).length;
+  var paidAmount = items.filter(function(item) { return item.paid; })
+    .reduce(function(sum, item) { return sum + Math.max(0, Number(item.price) || 0); }, 0);
+
+  return {
+    total: total,
+    posted: posted,
+    paid: paid,
+    paidAmount: paidAmount,
+    unpaid: total - paidAmount,
+    average: items.length ? total / items.length : 0
+  };
+}
+
+/**
+ * Render the SVG spending bar chart grouped by month.
+ */
+function renderSpendingChart(items) {
+  var target = $('#spending-chart');
+
+  if (!items.length) {
+    target.innerHTML =
+      '<div class="chart-empty"><div>' +
+      '<i class="fa-solid fa-chart-column"></i><br><br>' +
+      'No spending data in this period.</div></div>';
+    return;
+  }
+
+  // Bucket spending by month
+  var buckets = new Map();
+  items.forEach(function(item) {
+    var d = campaignDate(item);
+    if (Number.isNaN(d.getTime())) return;
+    var key = d.getFullYear() + '-' + pad(d.getMonth() + 1);
+    var existing = buckets.get(key) || {
+      label: MONTH_SHORT[d.getMonth()] + ' ' + String(d.getFullYear()).slice(-2),
+      value: 0,
+      count: 0
+    };
+    existing.value += Math.max(0, Number(item.price) || 0);
+    existing.count++;
+    buckets.set(key, existing);
+  });
+
+  var data = Array.from(buckets.entries())
+    .sort(function(a, b) { return a[0].localeCompare(b[0]); })
+    .map(function(x) { return x[1]; });
+
+  if (!data.length) {
+    target.innerHTML = '<div class="chart-empty">No valid campaign dates to chart.</div>';
+    return;
+  }
+
+  // Chart dimensions
+  var max = Math.max.apply(null, data.map(function(x) { return x.value; }).concat([1]));
+  var W = 620, H = 180;
+  var left = 48, right = 12, top = 18, bottom = 32;
+  var base = H - bottom;
+  var plot = base - top;
+  var slotCount = Math.max(data.length, 3);
+  var slot = (W - left - right) / slotCount;
+  var barW = Math.max(14, Math.min(48, slot * 0.58));
+  var totalOffset = data.length === 1 ? (W - left - right) / 2 - slot / 2 : 0;
+
+  // Gridlines & value labels (5 lines for premium look)
+  var gridPcts = [0, 0.25, 0.5, 0.75, 1];
+  var grids = gridPcts.map(function(p) {
+    var y = base - plot * p;
+    return '<line class="chart-gridline" x1="' + left + '" x2="' + (W - right) +
+           '" y1="' + y + '" y2="' + y + '"/>' +
+           '<text class="chart-value-label" x="4" y="' + (y + 4) + '">' +
+           analyticsCurrency(max * p) + '</text>';
+  }).join('');
+
+  // Bars
+  var bars = data.map(function(item, i) {
+    var h = Math.max(item.value ? 4 : 0, plot * item.value / max);
+    var x = left + totalOffset + slot * i + (slot - barW) / 2;
+    var y = base - h;
+    var tooltipText = item.label + ' — ' + item.count + ' campaign' + (item.count === 1 ? '' : 's') + ' — Total: ' + analyticsCurrency(item.value);
+    return '<rect class="chart-bar" x="' + x + '" y="' + y +
+           '" width="' + barW + '" height="' + h + '" rx="5">' +
+           '<title>' + tooltipText + '</title></rect>' +
+           '<text class="chart-axis-label" x="' + (x + barW / 2) +
+           '" y="' + (H - 9) + '" text-anchor="middle">' + item.label + '</text>';
+  }).join('');
+
+  target.innerHTML =
+    '<svg class="spend-chart" viewBox="0 0 ' + W + ' ' + H +
+    '" role="img" aria-label="Spending by month">' +
+    '<defs><linearGradient id="spendingGradient" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop stop-color="#F77737"/><stop offset="1" stop-color="#E1306C"/>' +
+    '</linearGradient></defs>' +
+    grids + bars + '</svg>';
+}
+
+/**
+ * Build a single donut ring metric SVG.
+ */
+function ring(label, complete, total, color) {
+  var percent = total ? Math.round(complete / total * 100) : 0;
+  var length = 251.2;
+  var dash = length * percent / 100;
+  var remaining = Math.max(0, total - complete);
+
+  return '<div class="ring-metric">' +
+    '<svg class="ring" viewBox="0 0 100 100" role="img" aria-label="' +
+    label + ': ' + complete + ' of ' + total + '">' +
+    '<circle class="ring-track" cx="50" cy="50" r="40"/>' +
+    '<circle class="ring-progress" cx="50" cy="50" r="40" stroke="' + color +
+    '" stroke-dasharray="' + dash + ' ' + length + '">' +
+    '<title>' + label + ': ' + complete + ' of ' + total +
+    ' (' + percent + '%)</title></circle>' +
+    '<text class="ring-number" x="50" y="55">' + percent + '%</text></svg>' +
+    '<div class="ring-caption">' + label + '</div>' +
+    '<div class="ring-detail">' + complete + ' ' + label.toLowerCase() +
+    ' \u00b7 ' + remaining + ' not ' + label.toLowerCase() + '</div></div>';
+}
+
+/**
+ * Render the performance donut rings.
+ */
+function renderPerformance(data, total) {
+  var el = $('#performance-chart');
+  if (total) {
+    el.innerHTML = ring('Posted', data.posted, total, '#22d3a0') +
+                   ring('Paid', data.paid, total, '#38bdf8');
+  } else {
+    el.innerHTML =
+      '<div class="chart-empty" style="grid-column:1/-1">' +
+      'No campaigns to measure yet.</div>';
+  }
+}
+
+/**
+ * Render platform breakdown cards.
+ */
+function renderPlatforms(items) {
+  var target = $('#platform-breakdown');
+
+  if (!items.length) {
+    target.innerHTML =
+      '<div class="chart-empty">Platform insights will appear once campaigns are added.</div>';
+    return;
+  }
+
+  var groups = new Map();
+  items.forEach(function(item) {
+    var name = item.platform || 'Unspecified';
+    var group = groups.get(name) || { count: 0, spend: 0 };
+    group.count++;
+    group.spend += Math.max(0, Number(item.price) || 0);
+    groups.set(name, group);
+  });
+
+  var total = items.length;
+  target.innerHTML = Array.from(groups.entries())
+    .sort(function(a, b) { return b[1].count - a[1].count; })
+    .map(function(entry) {
+      var name = entry[0], g = entry[1];
+      var pct = Math.round(g.count / total * 100);
+      return '<div class="platform-item">' +
+        '<div class="platform-name"><span>' + safeText(name) + '</span>' +
+        '<span>' + g.count + ' campaign' + (g.count === 1 ? '' : 's') + '</span></div>' +
+        '<div class="platform-bar"><span class="platform-fill" style="width:' +
+        pct + '%"></span></div>' +
+        '<div class="platform-meta"><span>' + pct + '% of campaigns</span>' +
+        '<span>' + analyticsCurrency(g.spend) + '</span></div></div>';
+    }).join('');
+}
+
+/**
+ * Dynamically populate platform filter dropdown from existing campaign data.
+ */
+function populatePlatforms() {
+  var select = $('#list-filter-platform');
+  var current = select.value;
+  var seen = {};
+  var values = [];
+  ITEMS.forEach(function(x) {
+    if (x.platform && !seen[x.platform]) {
+      seen[x.platform] = true;
+      values.push(x.platform);
+    }
+  });
+  values.sort();
+  select.innerHTML = '<option value="">All Platforms</option>' +
+    values.map(function(v) {
+      return '<option value="' + safeText(v) + '">' + safeText(v) + '</option>';
+    }).join('');
+  select.value = (values.indexOf(current) !== -1) ? current : '';
+}
+
+/**
+ * Master render function for the List & Analytics view.
+ * Computes KPIs, renders charts, filters/sorts/renders the campaign table.
+ */
+function renderList() {
+  populatePlatforms();
+
+  // ── KPI & Chart Analytics (period-filtered) ──
+  var analyticsItems = getAnalyticsItems();
+  var data = analyticsData(analyticsItems);
+
+  $('#stat-total').textContent = analyticsCurrency(data.total);
+  $('#stat-count').textContent = analyticsItems.length;
+  $('#stat-posted').textContent = data.posted;
+  $('#stat-paid').textContent = data.paid;
+  $('#stat-unpaid').textContent = analyticsCurrency(data.unpaid) + ' unpaid';
+  $('#stat-average').textContent = analyticsCurrency(data.average) + ' avg.';
+  $('#stat-completion').textContent =
+    (analyticsItems.length ? Math.round(data.posted / analyticsItems.length * 100) : 0) + '% completion';
+  $('#stat-paid-amount').textContent = analyticsCurrency(data.paidAmount) + ' paid';
+  $('#spending-summary').textContent =
+    analyticsItems.length + ' campaign' + (analyticsItems.length === 1 ? '' : 's') + ' in selected period';
+
+  renderSpendingChart(analyticsItems);
+  renderPerformance(data, analyticsItems.length);
+  renderPlatforms(analyticsItems);
+
+  // ── Campaign Table (all items, user-filtered) ──
+  var search = ($('#list-search').value || '').toLowerCase();
+  var platform = $('#list-filter-platform').value;
+  var postedFilter = $('#list-filter-posted').value;
+  var paidFilter = $('#list-filter-paid').value;
+
+  var items = ITEMS.filter(function(item) {
+    var haystack = [item.influencer, item.brand, item.platform, item.whenToPay, item.time]
+      .join(' ').toLowerCase();
+    return (!search || haystack.includes(search))
+      && (!platform || item.platform === platform)
+      && (!postedFilter || !!item.posted === (postedFilter === 'yes'))
+      && (!paidFilter || !!item.paid === (paidFilter === 'yes'));
+  }).map(function(item, index) { return { item: item, index: index }; });
+
+  // Sort
+  items.sort(function(a, b) {
+    var read = function(e) {
+      if (listSort.key === 'date') return campaignDate(e.item).getTime();
+      if (listSort.key === 'price') return Number(e.item.price) || 0;
+      if (listSort.key === 'posted' || listSort.key === 'paid')
+        return Number(!!e.item[listSort.key]);
+      return String(e.item[listSort.key] || '').toLowerCase();
+    };
+    var av = read(a), bv = read(b);
+    return (av > bv ? 1 : av < bv ? -1 : a.index - b.index) * listSort.direction;
+  });
+
+  // Update summary
+  $('#table-summary').textContent =
+    items.length + ' of ' + ITEMS.length + ' campaign' +
+    (ITEMS.length === 1 ? '' : 's') + ' shown';
+
+  // Render table rows
+  var tbody = document.querySelector('#table-list tbody');
+  if (items.length) {
+    tbody.innerHTML = '';
+  } else {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="table-empty">' +
+      (ITEMS.length
+        ? 'No matching campaigns. Adjust or clear your filters.'
+        : 'No campaigns yet. Create a campaign to unlock analytics.') +
+      '</div></td></tr>';
+  }
+
+  items.forEach(function(entry) {
+    var it = entry.item;
+    var tr = document.createElement('tr');
+    var mNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var ds = pad(it.date) + ' ' + mNames[(it.month||1)-1] + ' ' + it.year;
+    var pm = it.payMonth || it.month;
+    var ps = pad(it.payDate || it.date) + ' ' + mNames[(pm||1)-1] + ' ' + (it.payYear || it.year);
+    var when = it.whenToPay === 'Before' ? 'pill-before' : 'pill-after';
+
+    tr.innerHTML =
+      '<td>' + ds + '</td>' +
+      '<td>' + safeText(it.time || '\u2014') + '</td>' +
+      '<td style="color:var(--ink);font-weight:500">' + safeText(it.influencer) + '</td>' +
+      '<td>' + safeText(it.brand) + '</td>' +
+      '<td>' + platformBadge(it.platform) + ' ' + safeText(it.platform) + '</td>' +
+      '<td style="color:var(--accent2);font-weight:600">' + analyticsCurrency(it.price) + '</td>' +
+      '<td><span class="pill ' + when + '">' + safeText(it.whenToPay || 'After') + '</span></td>' +
+      '<td>' + ps + '</td>' +
+      '<td><span class="pill status-pill ' + (it.posted ? 'pill-yes' : 'pill-no') + '">' +
+        (it.posted ? 'Yes' : 'No') + '</span></td>' +
+      '<td><span class="pill status-pill ' + (it.paid ? 'pill-yes' : 'pill-no') + '">' +
+        (it.paid ? 'Yes' : 'No') + '</span></td>';
+    tbody.appendChild(tr);
+  });
+
+  // Update sort button icons
+  document.querySelectorAll('.sort-btn').forEach(function(button) {
+    var icon = button.querySelector('.sort-icon');
+    if (icon) {
+      icon.className = 'fa-solid ' +
+        (button.dataset.sort === listSort.key
+          ? (listSort.direction === 1 ? 'fa-sort-up' : 'fa-sort-down')
+          : 'fa-sort') +
+        ' sort-icon';
+    }
+  });
+}
+
+// ── Analytics Event Listeners ──
 $('#list-search').addEventListener('input', renderList);
 $('#list-filter-platform').addEventListener('change', renderList);
+$('#list-filter-posted').addEventListener('change', renderList);
+$('#list-filter-paid').addEventListener('change', renderList);
+$('#analytics-period').addEventListener('change', renderList);
+
+document.querySelectorAll('.sort-btn').forEach(function(button) {
+  button.addEventListener('click', function() {
+    listSort.direction = listSort.key === button.dataset.sort ? -listSort.direction : 1;
+    listSort.key = button.dataset.sort;
+    renderList();
+  });
+});
 
 // ══════════════════════════════════════════════════════
 // SETTINGS
