@@ -8,20 +8,17 @@ It brings campaign organization, calendar management, payment tracking, and acti
 
 ## 📸 Application Preview
 
-\<!-- Replace these paths with your actual GitHub screenshot paths -->
-
 ### Dashboard
-
-
+![Dashboard](screenshots/create.png)
 
 ### Calendar Management
-
-
+![Calendar Management](screenshots/calendar.png)
 
 ### List & Analytics
+![Analytics Dashboard](screenshots/analytics.png)
 
-
-
+### Notifications
+![Notifications](screenshots/notification.png)
 ---
 
 ## ✨ Key Features
